@@ -1,20 +1,25 @@
 <h4>Formularios <small>template</small></h4>
 <hr>
-<form (ngSubmit)="guardar()" novalidate>
+<form (ngSubmit)="guardar(forma)" #forma="ngForm" novalidate>
 
   <div>
 
-    <div class="form-group row">
+    <div class="form-group row"
+      [ngClass]="{'has-danger': (nombre.errors?.minlength || nombre.errors?.required) && nombre.touched}">
       <label class="col-2 col-form-label">Nombre</label>
       <div class="col-8">
 
-        <input class="form-control"
-               type="text"
-               placeholder="Nombre"
-               name="nombre"
-               ngModel
-               minlength="5"
-               required>
+        <input class="form-control" type="text" placeholder="Nombre" name="nombre" [(ngModel)]="usuario.nombre"
+          minlength="5" required #nombre="ngModel">
+
+        <div *ngIf="nombre.errors?.required" class="form-control-feedback">
+          Este campo es requerido
+        </div>
+
+        <div *ngIf="nombre.errors?.minlength" class="form-control-feedback">
+          Por lo menos {{ nombre.errors.minlength.requiredLength }} caracteres
+        </div>
+
       </div>
     </div>
 
@@ -22,10 +27,12 @@
       <label class="col-2 col-form-label">Apellido</label>
       <div class="col-8">
 
-        <input class="form-control"
-               type="text"
-               placeholder="Apellido"
-               ngModel>
+        <input class="form-control" type="text" placeholder="Apellido" name="apellido" #apellido="ngModel"
+          [(ngModel)]="usuario.apellido" required>
+
+        <div *ngIf="apellido.errors?.required">
+          Este campo es requerido
+        </div>
       </div>
     </div>
 
@@ -35,22 +42,90 @@
     <label class="col-2 col-form-label">Correo</label>
     <div class="col-md-8">
 
-      <input class="form-control"
-             type="email"
-             placeholder="Correo electrónico"
-             ngModel>
+      <input class="form-control" type="email" placeholder="Correo electrónico" name="correo"
+        [(ngModel)]="usuario.correo" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" #correo="ngModel">
+
+      <div *ngIf="correo.errors?.required">
+        Este campo es requerido
+      </div>
+
+      <div *ngIf="correo.errors?.pattern">
+        El formato no es correcto
+      </div>
+
     </div>
   </div>
+
+  <div class="form-group row">
+    <label class="col-2 col-form-label">Pais</label>
+    <div class="col-md-8">
+      <select name="pais" [(ngModel)]="usuario.pais" class="form-control">
+        <option value="">Seleccione un país</option>
+        <option *ngFor="let pais of paises" [value]="pais.codigo">{{ pais.nombre }}</option>
+      </select>
+    </div>
+  </div>
+
+
+  <div class="form-group row">
+    <label class="col-2 col-form-label">Sexo</label>
+    <div class="col-md-8">
+
+      <div class="form-check">
+        <input [(ngModel)]="usuario.sexo" name="sexo" class="form-check-input" type="radio" value="Hombre">
+        <label class="form-check-label" for="exampleRadios1">
+          Hombre
+        </label>
+      </div>
+
+      <div class="form-check">
+        <input [(ngModel)]="usuario.sexo" name="sexo" class="form-check-input" type="radio" value="Mujer">
+        <label class="form-check-label" for="exampleRadios1">
+          Mujer
+        </label>
+      </div>
+
+    </div>
+  </div>
+
+
+  <div class="form-group row">
+    <label class="col-2 col-form-label"></label>
+    <div class="col-md-8">
+
+      <div class="form-check">
+        <input  [(ngModel)]="usuario.acepta"
+                name="acepta"
+                class="form-check-input" 
+                type="checkbox"
+                required>
+        <label class="form-check-label" for="defaultCheck1">
+          Acepta las condiciones
+        </label>
+      </div>
+
+    </div>
+  </div>
+
+
+
 
 
 
   <div class="form-group row">
     <label class="col-2 col-form-label">&nbsp;</label>
     <div class="input-group col-md-8">
-      <button type="submit" class="btn btn-outline-primary">
+      
+      <button [disabled]="forma.invalid" type="submit" class="btn btn-outline-primary">
         Guardar
       </button>
     </div>
   </div>
 
 </form>
+
+<pre>
+
+  {{ usuario | json }}
+
+</pre>
